@@ -9,7 +9,7 @@ const tabs = [
 
 export default function TabBar() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-bg border-t border-border grid grid-cols-4 pb-[max(env(safe-area-inset-bottom),12px)] pt-2">
+    <nav aria-label="Primary" className="fixed bottom-0 left-0 right-0 bg-bg border-t border-border grid grid-cols-4 pb-[max(env(safe-area-inset-bottom),12px)] pt-2">
       {tabs.map(({ to, label, icon, end }) => (
         <NavLink
           key={to}
@@ -19,7 +19,7 @@ export default function TabBar() {
             `flex flex-col items-center gap-0.5 text-xs ${isActive ? 'text-accent font-semibold' : 'text-muted'}`
           }
         >
-          <span className="text-lg">{icon}</span>
+          <span className="text-lg" aria-hidden="true">{icon}</span>
           <span>{label}</span>
         </NavLink>
       ))}

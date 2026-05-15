@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../hooks/useSettings';
 import { calculateTargets } from '../lib/macros';
 import { toISODate } from '../lib/date';
@@ -7,11 +7,17 @@ export default function SettingsScreen() {
   const { settings, save } = useSettings();
   const [bodyWeight, setBodyWeight] = useState<string>('');
   const [surplus, setSurplus] = useState<number>(300);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    if (initialized.current) return;
     if (settings) {
       setBodyWeight(String(settings.bodyWeight_lbs));
       setSurplus(settings.surplusTarget);
+      initialized.current = true;
+    } else if (settings === null) {
+      // No row stored — keep blank defaults but mark initialized
+      initialized.current = true;
     }
   }, [settings]);
 
@@ -65,6 +71,7 @@ export default function SettingsScreen() {
               onChange={(e) => setSurplus(parseInt(e.target.value, 10))}
               onMouseUp={handleSave}
               onTouchEnd={handleSave}
+              onKeyUp={handleSave}
               className="w-full mt-2 accent-accent"
               aria-label="Calorie surplus"
             />
