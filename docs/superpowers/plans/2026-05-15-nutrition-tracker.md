@@ -1486,7 +1486,7 @@ export default function TodayScreen() {
   const { entries, totals, remove } = useDailyLog(today);
 
   const foodIds = useMemo(() => entries.map((e) => e.foodId), [entries]);
-  const foods = useLiveQuery<Food[]>(
+  const foods = useLiveQuery(
     () => (foodIds.length === 0 ? Promise.resolve([] as Food[]) : db.foods.where('id').anyOf(foodIds).toArray()),
     [foodIds.join(',')],
     [] as Food[]
