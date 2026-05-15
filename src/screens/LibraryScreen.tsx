@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useFoods } from '../hooks/useFoods';
 import type { Food } from '../types';
+import { searchUsda, getUsdaApiKey, type UsdaResult } from '../lib/usda';
 
 function blankDraft(): Omit<Food, 'id'> {
   return {
@@ -19,6 +20,37 @@ export default function LibraryScreen() {
   const [query, setQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [draft, setDraft] = useState(blankDraft());
+  const [usdaResults, setUsdaResults] = useState<UsdaResult[]>([]);
+  const [usdaLoading, setUsdaLoading] = useState(false);
+  const [usdaError, setUsdaError] = useState<string | null>(null);
+
+  async function runUsdaSearch() {
+    if (query.trim().length < 2 || usdaLoading) return;
+    setUsdaLoading(true);
+    setUsdaError(null);
+    try {
+      const results = await searchUsda(query, getUsdaApiKey());
+      setUsdaResults(results);
+    } catch (e) {
+      setUsdaError(e instanceof Error ? e.message : 'Search failed');
+      setUsdaResults([]);
+    } finally {
+      setUsdaLoading(false);
+    }
+  }
+
+  async function addFromUsda(r: UsdaResult) {
+    await add({
+      id: crypto.randomUUID(),
+      name: r.name,
+      calories: r.calories,
+      protein: r.protein,
+      carbs: r.carbs,
+      fat: r.fat,
+      servingSize: 100,
+      servingUnit: 'g',
+    });
+  }
 
   const filtered = useMemo(
     () =>
@@ -64,8 +96,17 @@ export default function LibraryScreen() {
           placeholder="Search foods..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') runUsdaSearch(); }}
           className="flex-1 bg-card rounded-lg px-3 py-2 text-sm"
         />
+        <button
+          onClick={runUsdaSearch}
+          disabled={query.trim().length < 2 || usdaLoading}
+          className="bg-card text-white rounded-lg px-3 text-sm"
+          aria-label="Search USDA"
+        >
+          🔍
+        </button>
         <button
           onClick={() => setShowForm((s) => !s)}
           className="bg-accent text-black rounded-lg px-3 text-sm font-bold"
@@ -99,6 +140,27 @@ export default function LibraryScreen() {
             Save Food
           </button>
         </div>
+      )}
+
+      {usdaLoading && <div className="text-sm text-subtle">Searching USDA…</div>}
+      {usdaError && <div className="text-sm text-fat">{usdaError}</div>}
+      {usdaResults.length > 0 && (
+        <section>
+          <div className="text-xs uppercase tracking-wider text-muted mb-2">USDA Results</div>
+          <div className="space-y-1.5">
+            {usdaResults.map((r) => (
+              <div key={r.fdcId} className="bg-card rounded-xl p-3 flex items-center justify-between">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{r.name}</div>
+                  <div className="text-xs text-muted">
+                    {Math.round(r.calories)} kcal / 100g · {Math.round(r.protein)}p {Math.round(r.carbs)}c {Math.round(r.fat)}f
+                  </div>
+                </div>
+                <button onClick={() => addFromUsda(r)} className="text-accent text-xl leading-none px-1" aria-label={`Add ${r.name} to library`}>+</button>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       <div className="text-xs uppercase tracking-wider text-muted">My Foods</div>
