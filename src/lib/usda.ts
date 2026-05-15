@@ -38,3 +38,7 @@ export async function searchUsda(query: string, apiKey: string): Promise<UsdaRes
     fat: getNutrient(f, NUTRIENT_IDS.fat),
   }));
 }
+
+export function getUsdaApiKey(): string {
+  return import.meta.env.VITE_USDA_API_KEY || 'DEMO_KEY';
+}
