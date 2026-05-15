@@ -164,7 +164,7 @@ Create `tsconfig.node.json`:
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "noEmit": true,
+    "composite": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true
   },
@@ -176,6 +176,7 @@ Create `tsconfig.node.json`:
 
 Create `vite.config.ts`:
 ```ts
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -254,6 +255,9 @@ coverage/
 *.local
 .env
 .env.local
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 ```
 
 - [ ] **Step 10: Install dependencies and verify dev server starts**
@@ -3185,6 +3189,7 @@ Expected: Three SVG icon files appear under `public/`.
 
 Replace `vite.config.ts`:
 ```ts
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
