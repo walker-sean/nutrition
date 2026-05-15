@@ -14,7 +14,7 @@ import AddFoodSheet from '../components/AddFoodSheet';
 export default function TodayScreen() {
   const today = toISODate(new Date());
   const { settings } = useSettings();
-  const { entries, totals, remove } = useDailyLog(today);
+  const { entries, totals, add, remove } = useDailyLog(today);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const foodIds = useMemo(() => entries.map((e) => e.foodId), [entries]);
@@ -86,7 +86,7 @@ export default function TodayScreen() {
         open={sheetOpen}
         date={today}
         onClose={() => setSheetOpen(false)}
-        onAdd={(entry) => db.logEntries.put(entry)}
+        onAdd={add}
       />
     </div>
   );

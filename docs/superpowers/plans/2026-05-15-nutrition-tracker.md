@@ -1483,7 +1483,7 @@ import FoodLogEntry from '../components/FoodLogEntry';
 export default function TodayScreen() {
   const today = toISODate(new Date());
   const { settings } = useSettings();
-  const { entries, totals, remove } = useDailyLog(today);
+  const { entries, totals, add, remove } = useDailyLog(today);
 
   const foodIds = useMemo(() => entries.map((e) => e.foodId), [entries]);
   const foods = useLiveQuery(
@@ -1953,7 +1953,7 @@ Replace with:
         open={sheetOpen}
         date={today}
         onClose={() => setSheetOpen(false)}
-        onAdd={(entry) => db.logEntries.put(entry)}
+        onAdd={add}
       />
 ```
 
