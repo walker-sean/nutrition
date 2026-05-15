@@ -1,2 +1,14 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: #111; color: white; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply bg-bg text-white;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply min-h-screen;
+  }
+}
