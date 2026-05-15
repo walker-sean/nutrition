@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useSettings } from '../hooks/useSettings';
 import { useDailyLog } from '../hooks/useDailyLog';
@@ -9,11 +9,13 @@ import type { Food } from '../types';
 import CalorieRing from '../components/CalorieRing';
 import MacroBars from '../components/MacroBars';
 import FoodLogEntry from '../components/FoodLogEntry';
+import AddFoodSheet from '../components/AddFoodSheet';
 
 export default function TodayScreen() {
   const today = toISODate(new Date());
   const { settings } = useSettings();
   const { entries, totals, remove } = useDailyLog(today);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const foodIds = useMemo(() => entries.map((e) => e.foodId), [entries]);
   const foods = useLiveQuery(
@@ -74,12 +76,18 @@ export default function TodayScreen() {
 
       <button
         type="button"
+        onClick={() => setSheetOpen(true)}
         className="w-full bg-accent text-black font-bold rounded-xl py-3 text-sm"
-        disabled
-        title="Add Food (added in a later task)"
       >
         + Add Food
       </button>
+
+      <AddFoodSheet
+        open={sheetOpen}
+        date={today}
+        onClose={() => setSheetOpen(false)}
+        onAdd={(entry) => db.logEntries.put(entry)}
+      />
     </div>
   );
 }
