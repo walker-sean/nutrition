@@ -211,7 +211,7 @@ export default function RecipeEditor({ open, initial, onClose, onSave, onDelete 
         </div>
 
         {foodPickerOpen && (
-          <div className="fixed inset-0 z-60 flex items-end" role="dialog" aria-modal="true">
+          <div className="fixed inset-0 z-[60] flex items-end" role="dialog" aria-modal="true">
             <div className="absolute inset-0 bg-black/70" onClick={() => setFoodPickerOpen(false)} />
             <div className="relative w-full bg-surface rounded-t-3xl p-4 max-h-[80vh] flex flex-col">
               <div className="flex items-center justify-between mb-3">
