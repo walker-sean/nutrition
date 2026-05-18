@@ -1,0 +1,149 @@
+{
+  "foods": [
+    { "id": "seed-chicken-breast", "name": "Chicken breast (cooked)", "calories": 165, "protein": 31, "carbs": 0, "fat": 3.6, "servingSize": 150, "servingUnit": "g" },
+    { "id": "seed-ground-beef-93", "name": "Lean ground beef 93/7 (cooked)", "calories": 152, "protein": 22, "carbs": 0, "fat": 7, "servingSize": 150, "servingUnit": "g" },
+    { "id": "seed-greek-yogurt-0", "name": "Greek yogurt 0%", "calories": 59, "protein": 10, "carbs": 3.6, "fat": 0.4, "servingSize": 200, "servingUnit": "g" },
+    { "id": "seed-cottage-cheese-2", "name": "Cottage cheese 2%", "calories": 84, "protein": 11, "carbs": 4.3, "fat": 2.3, "servingSize": 200, "servingUnit": "g" },
+    { "id": "seed-whey-isolate", "name": "Whey isolate", "calories": 380, "protein": 88, "carbs": 4, "fat": 1, "servingSize": 30, "servingUnit": "g" },
+    { "id": "seed-egg-whole", "name": "Whole egg", "calories": 143, "protein": 13, "carbs": 0.7, "fat": 9.5, "servingSize": 50, "servingUnit": "g", "displayUnit": "ea" },
+    { "id": "seed-oats-rolled", "name": "Rolled oats (dry)", "calories": 380, "protein": 13, "carbs": 67, "fat": 7, "servingSize": 40, "servingUnit": "g" },
+    { "id": "seed-rice-white", "name": "White rice (cooked)", "calories": 130, "protein": 2.7, "carbs": 28, "fat": 0.3, "servingSize": 200, "servingUnit": "g" },
+    { "id": "seed-sweet-potato", "name": "Sweet potato (cooked)", "calories": 86, "protein": 1.6, "carbs": 20, "fat": 0.1, "servingSize": 200, "servingUnit": "g" },
+    { "id": "seed-pasta-cooked", "name": "Pasta (cooked)", "calories": 158, "protein": 5.8, "carbs": 31, "fat": 0.9, "servingSize": 200, "servingUnit": "g" },
+    { "id": "seed-banana", "name": "Banana", "calories": 89, "protein": 1.1, "carbs": 23, "fat": 0.3, "servingSize": 120, "servingUnit": "g" },
+    { "id": "seed-blueberries", "name": "Blueberries", "calories": 57, "protein": 0.7, "carbs": 14, "fat": 0.3, "servingSize": 100, "servingUnit": "g" },
+    { "id": "seed-olive-oil", "name": "Olive oil", "calories": 884, "protein": 0, "carbs": 0, "fat": 100, "servingSize": 14, "servingUnit": "g" },
+    { "id": "seed-avocado", "name": "Avocado", "calories": 160, "protein": 2, "carbs": 9, "fat": 15, "servingSize": 100, "servingUnit": "g" },
+    { "id": "seed-peanut-butter", "name": "Peanut butter", "calories": 588, "protein": 25, "carbs": 20, "fat": 50, "servingSize": 32, "servingUnit": "g" },
+    { "id": "seed-honey", "name": "Honey", "calories": 304, "protein": 0.3, "carbs": 82, "fat": 0, "servingSize": 21, "servingUnit": "g" }
+  ],
+  "recipes": [
+    {
+      "id": "seed-overnight-oats",
+      "name": "Overnight oats with whey + berries",
+      "slots": ["breakfast"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-oats-rolled", "grams": 80 },
+        { "foodId": "seed-whey-isolate", "grams": 30 },
+        { "foodId": "seed-blueberries", "grams": 100 },
+        { "foodId": "seed-greek-yogurt-0", "grams": 100 }
+      ],
+      "instructions": "Combine in a jar the night before. Refrigerate.",
+      "seeded": true
+    },
+    {
+      "id": "seed-egg-scramble",
+      "name": "Egg scramble with oats",
+      "slots": ["breakfast"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-egg-whole", "grams": 200 },
+        { "foodId": "seed-oats-rolled", "grams": 60 },
+        { "foodId": "seed-olive-oil", "grams": 7 }
+      ],
+      "instructions": "Scramble 4 eggs in olive oil; serve with oats prepared with water.",
+      "seeded": true
+    },
+    {
+      "id": "seed-chicken-rice-bowl",
+      "name": "Chicken & rice bowl",
+      "slots": ["lunch", "postWorkout"],
+      "servings": 4,
+      "ingredients": [
+        { "foodId": "seed-chicken-breast", "grams": 600 },
+        { "foodId": "seed-rice-white", "grams": 800 },
+        { "foodId": "seed-olive-oil", "grams": 14 }
+      ],
+      "instructions": "Cook chicken; toss with rice and a drizzle of olive oil. Portion into 4 containers.",
+      "seeded": true
+    },
+    {
+      "id": "seed-beef-sweet-potato",
+      "name": "Ground beef + sweet potato",
+      "slots": ["lunch"],
+      "servings": 4,
+      "ingredients": [
+        { "foodId": "seed-ground-beef-93", "grams": 600 },
+        { "foodId": "seed-sweet-potato", "grams": 800 }
+      ],
+      "instructions": "Brown beef; roast sweet potato cubes; portion into 4 containers.",
+      "seeded": true
+    },
+    {
+      "id": "seed-pasta-chicken",
+      "name": "Pasta with chicken",
+      "slots": ["lunch", "postWorkout"],
+      "servings": 4,
+      "ingredients": [
+        { "foodId": "seed-pasta-cooked", "grams": 800 },
+        { "foodId": "seed-chicken-breast", "grams": 500 },
+        { "foodId": "seed-olive-oil", "grams": 14 }
+      ],
+      "instructions": "Cook pasta; toss with shredded chicken and olive oil.",
+      "seeded": true
+    },
+    {
+      "id": "seed-banana-pb-toast",
+      "name": "Banana + PB pre-workout",
+      "slots": ["preWorkout"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-banana", "grams": 120 },
+        { "foodId": "seed-peanut-butter", "grams": 32 }
+      ],
+      "instructions": "Eat 60-90 min before training.",
+      "seeded": true
+    },
+    {
+      "id": "seed-honey-whey-pre",
+      "name": "Whey + honey pre-workout",
+      "slots": ["preWorkout"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-whey-isolate", "grams": 30 },
+        { "foodId": "seed-honey", "grams": 21 }
+      ],
+      "instructions": "Quick-digesting carbs + protein; ~45-60 min before lift.",
+      "seeded": true
+    },
+    {
+      "id": "seed-post-shake",
+      "name": "Post-workout shake + rice",
+      "slots": ["postWorkout"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-whey-isolate", "grams": 40 },
+        { "foodId": "seed-banana", "grams": 120 },
+        { "foodId": "seed-rice-white", "grams": 300 }
+      ],
+      "instructions": "Blend shake; eat with rice within 90 min post-lift.",
+      "seeded": true
+    },
+    {
+      "id": "seed-greek-yogurt-bowl",
+      "name": "Greek yogurt + berries + PB",
+      "slots": ["preBed"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-greek-yogurt-0", "grams": 300 },
+        { "foodId": "seed-blueberries", "grams": 100 },
+        { "foodId": "seed-peanut-butter", "grams": 16 }
+      ],
+      "instructions": "Slow-digesting casein-rich snack before sleep.",
+      "seeded": true
+    },
+    {
+      "id": "seed-cottage-cheese-pre-bed",
+      "name": "Cottage cheese bowl",
+      "slots": ["preBed"],
+      "servings": 1,
+      "ingredients": [
+        { "foodId": "seed-cottage-cheese-2", "grams": 300 },
+        { "foodId": "seed-blueberries", "grams": 100 }
+      ],
+      "instructions": "High in slow-release protein.",
+      "seeded": true
+    }
+  ]
+}
