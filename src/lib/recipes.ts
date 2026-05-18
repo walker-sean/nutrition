@@ -27,11 +27,10 @@ export function recipeTotals(recipe: Recipe, foods: Food[]): Macros {
 
 export function recipePerServing(recipe: Recipe, foods: Food[]): Macros {
   const total = recipeTotals(recipe, foods);
-  const s = recipe.servings || 1;
   return {
-    calories: total.calories / s,
-    protein: total.protein / s,
-    carbs: total.carbs / s,
-    fat: total.fat / s,
+    calories: total.calories / recipe.servings,
+    protein: total.protein / recipe.servings,
+    carbs: total.carbs / recipe.servings,
+    fat: total.fat / recipe.servings,
   };
 }
