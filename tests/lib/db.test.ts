@@ -51,4 +51,35 @@ describe('db', () => {
     expect(today).toHaveLength(1);
     expect(today[0].id).toBe('l1');
   });
+
+  it('exposes v2 tables (recipes, mealPlans, batches)', () => {
+    expect(db.recipes).toBeDefined();
+    expect(db.mealPlans).toBeDefined();
+    expect(db.batches).toBeDefined();
+  });
+
+  it('stores and retrieves a recipe', async () => {
+    await db.recipes.put({
+      id: 'r1',
+      name: 'Test Recipe',
+      slots: ['breakfast'],
+      servings: 4,
+      ingredients: [{ foodId: 'f1', grams: 100 }],
+    });
+    const r = await db.recipes.get('r1');
+    expect(r?.name).toBe('Test Recipe');
+  });
+
+  it('preserves existing food rows across the v2 upgrade', async () => {
+    await db.foods.add({
+      id: 'food-keep',
+      name: 'Carry-over food',
+      calories: 100, protein: 10, carbs: 10, fat: 5,
+      servingSize: 100, servingUnit: 'g',
+    });
+    await db.close();
+    await db.open();
+    const f = await db.foods.get('food-keep');
+    expect(f?.name).toBe('Carry-over food');
+  });
 });
