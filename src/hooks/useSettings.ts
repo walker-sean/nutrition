@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../lib/db';
+import { forceReloadSeeds } from '../lib/seedLoader';
 import type { Settings } from '../types';
 
 export function useSettings() {
@@ -12,5 +13,9 @@ export function useSettings() {
     await db.settings.put({ id: 1, ...input });
   }
 
-  return { settings, save };
+  async function reloadSeeds() {
+    await forceReloadSeeds();
+  }
+
+  return { settings, save, reloadSeeds };
 }

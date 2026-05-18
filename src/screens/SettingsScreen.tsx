@@ -4,9 +4,10 @@ import { calculateTargets } from '../lib/macros';
 import { toISODate } from '../lib/date';
 
 export default function SettingsScreen() {
-  const { settings, save } = useSettings();
+  const { settings, save, reloadSeeds } = useSettings();
   const [bodyWeight, setBodyWeight] = useState<string>('');
   const [surplus, setSurplus] = useState<number>(300);
+  const [reloadMsg, setReloadMsg] = useState<string | null>(null);
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -16,7 +17,6 @@ export default function SettingsScreen() {
       setSurplus(settings.surplusTarget);
       initialized.current = true;
     } else if (settings === null) {
-      // No row stored — keep blank defaults but mark initialized
       initialized.current = true;
     }
   }, [settings]);
@@ -99,6 +99,27 @@ export default function SettingsScreen() {
           <div>4-Day Lean Bulk Blueprint</div>
           <div className="text-subtle text-xs mt-1">Intermediate · Upper/Lower Split</div>
           <div className="text-subtle text-xs mt-1">Target gain: 0.5 lb / week</div>
+        </div>
+      </section>
+
+      <section>
+        <div className="text-xs uppercase tracking-wider text-muted mb-2">Starter recipes</div>
+        <div className="bg-card rounded-xl p-4 space-y-3 text-sm">
+          <p className="text-subtle">
+            Re-inserts any starter foods or recipes you've deleted. Won't overwrite ones you've edited.
+          </p>
+          <button
+            type="button"
+            onClick={async () => {
+              await reloadSeeds();
+              setReloadMsg('Starter recipes reloaded.');
+              setTimeout(() => setReloadMsg(null), 3000);
+            }}
+            className="w-full bg-surface border border-border rounded-lg py-2"
+          >
+            Reload starter recipes
+          </button>
+          {reloadMsg && <div className="text-xs text-accent">{reloadMsg}</div>}
         </div>
       </section>
     </div>
