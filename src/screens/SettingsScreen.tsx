@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../hooks/useSettings';
+import { useMealPlans } from '../hooks/useMealPlans';
 import { calculateTargets } from '../lib/macros';
 import { toISODate } from '../lib/date';
 
 export default function SettingsScreen() {
   const { settings, save, reloadSeeds } = useSettings();
+  const { plans, setActive } = useMealPlans();
   const [bodyWeight, setBodyWeight] = useState<string>('');
   const [surplus, setSurplus] = useState<number>(300);
   const [reloadMsg, setReloadMsg] = useState<string | null>(null);
@@ -24,6 +26,7 @@ export default function SettingsScreen() {
   const bw = parseFloat(bodyWeight);
   const valid = !Number.isNaN(bw) && bw > 0;
   const targets = valid ? calculateTargets({ bodyWeight_lbs: bw, surplusTarget: surplus }) : null;
+  const activePlanId = plans.find((p) => p.active)?.id ?? '';
 
   async function handleSave() {
     if (!valid) return;
@@ -99,6 +102,22 @@ export default function SettingsScreen() {
           <div>4-Day Lean Bulk Blueprint</div>
           <div className="text-subtle text-xs mt-1">Intermediate · Upper/Lower Split</div>
           <div className="text-subtle text-xs mt-1">Target gain: 0.5 lb / week</div>
+        </div>
+      </section>
+
+      <section>
+        <div className="text-xs uppercase tracking-wider text-muted mb-2">Active meal plan</div>
+        <div className="bg-card rounded-xl p-4">
+          <select
+            value={activePlanId}
+            onChange={(e) => setActive(e.target.value || undefined)}
+            className="w-full bg-surface rounded-md px-2 py-2 text-sm"
+          >
+            <option value="">(None — hide plan section on Today)</option>
+            {plans.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
         </div>
       </section>
 
