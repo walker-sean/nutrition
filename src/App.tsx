@@ -3,6 +3,7 @@ import TabBar from './components/TabBar';
 import TodayScreen from './screens/TodayScreen';
 import LibraryLayout from './screens/library/LibraryLayout';
 import FoodsSubScreen from './screens/library/FoodsSubScreen';
+import RecipesSubScreen from './screens/library/RecipesSubScreen';
 import ProgressScreen from './screens/ProgressScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
@@ -14,7 +15,7 @@ export default function App() {
           <Route path="/" element={<TodayScreen />} />
           <Route path="/library" element={<LibraryLayout />}>
             <Route index element={<FoodsSubScreen />} />
-            <Route path="recipes" element={<div className="text-sm text-subtle">Recipes — added in Task 1.10.</div>} />
+            <Route path="recipes" element={<RecipesSubScreen />} />
             <Route path="plans" element={<div className="text-sm text-subtle">Plans — added in Phase 2.</div>} />
           </Route>
           <Route path="/progress" element={<ProgressScreen />} />
