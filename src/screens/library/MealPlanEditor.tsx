@@ -5,6 +5,8 @@ import { useRecipes } from '../../hooks/useRecipes';
 import { SLOT_LABEL, SLOT_ORDER } from '../../lib/program';
 import type { MealSlot } from '../../types';
 import SlotPicker from '../../components/SlotPicker';
+import ShoppingListView from '../../components/ShoppingListView';
+import PrepDaySheet from '../../components/PrepDaySheet';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -16,6 +18,8 @@ export default function MealPlanEditor() {
   const plan = useMemo(() => plans.find((p) => p.id === planId), [plans, planId]);
   const recipeNameById = useMemo(() => new Map(recipes.map((r) => [r.id, r.name])), [recipes]);
   const [picker, setPicker] = useState<{ dayIndex: number; slot: MealSlot } | null>(null);
+  const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [prepOpen, setPrepOpen] = useState(false);
 
   if (!plan) {
     return (
@@ -80,6 +84,22 @@ export default function MealPlanEditor() {
         ))}
       </div>
 
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => setShoppingOpen(true)}
+          className="flex-1 bg-card rounded-lg py-2 text-sm"
+        >
+          Shopping list
+        </button>
+        <button
+          type="button"
+          onClick={() => setPrepOpen(true)}
+          className="flex-1 bg-card rounded-lg py-2 text-sm"
+        >
+          Start prep day
+        </button>
+      </div>
       <button
         type="button"
         onClick={() => navigate('/library/plans')}
@@ -87,6 +107,9 @@ export default function MealPlanEditor() {
       >
         Done
       </button>
+
+      <ShoppingListView open={shoppingOpen} plan={plan} onClose={() => setShoppingOpen(false)} />
+      <PrepDaySheet open={prepOpen} plan={plan} onClose={() => setPrepOpen(false)} />
 
       {picker && (
         <SlotPicker
