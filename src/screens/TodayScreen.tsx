@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useSettings } from '../hooks/useSettings';
 import { useDailyLog } from '../hooks/useDailyLog';
 import { useMealPlans } from '../hooks/useMealPlans';
+import { useBatches } from '../hooks/useBatches';
 import { useNavigate } from 'react-router-dom';
 import { calculateTargets } from '../lib/macros';
 import { recipePerServing } from '../lib/recipes';
@@ -20,8 +21,9 @@ export default function TodayScreen() {
   const today = toISODate(new Date());
   const navigate = useNavigate();
   const { settings } = useSettings();
-  const { entries, totals, add, remove } = useDailyLog(today);
+  const { entries, totals, add } = useDailyLog(today);
   const { plans } = useMealPlans();
+  const { batches, logFromBatch, restoreOnDelete } = useBatches();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const activePlan = plans.find((p) => p.active) ?? null;
@@ -72,21 +74,32 @@ export default function TodayScreen() {
 
   async function logSlot(slot: MealSlot, recipe: Recipe) {
     const m = recipePerServing(recipe, planRecipeFoods);
-    await add({
-      id: crypto.randomUUID(),
-      date: today,
-      recipeId: recipe.id,
-      slot,
-      calories: m.calories,
-      protein: m.protein,
-      carbs: m.carbs,
-      fat: m.fat,
-    });
+    await logFromBatch(
+      {
+        id: crypto.randomUUID(),
+        date: today,
+        recipeId: recipe.id,
+        slot,
+        calories: m.calories,
+        protein: m.protein,
+        carbs: m.carbs,
+        fat: m.fat,
+      },
+      recipe.id
+    );
   }
 
   function loggedEntryIdForSlot(slot: MealSlot): string | null {
     const e = entries.find((x) => x.slot === slot);
     return e?.id ?? null;
+  }
+
+  function batchInfoForRecipe(recipeId: string): string | undefined {
+    const avail = batches
+      .filter((b) => b.recipeId === recipeId && b.servingsRemaining > 0)
+      .reduce((sum, b) => sum + b.servingsRemaining, 0);
+    if (avail === 0) return undefined;
+    return `(${avail} serving${avail === 1 ? '' : 's'} prepped)`;
   }
 
   return (
@@ -127,9 +140,10 @@ export default function TodayScreen() {
                 caloriesTarget={caloriesForSlot(slot, targets.target_kcal)}
                 recipe={recipe}
                 loggedEntryId={loggedEntryIdForSlot(slot)}
+                batchInfo={recipe ? batchInfoForRecipe(recipe.id) : undefined}
                 onPick={() => navigate(`/library/plans/${activePlan.id}`)}
                 onLog={() => recipe && logSlot(slot, recipe)}
-                onUnlog={(id) => remove(id)}
+                onUnlog={(id) => restoreOnDelete(id)}
               />
             );
           })}
@@ -153,7 +167,7 @@ export default function TodayScreen() {
                   entry={e}
                   displayName={displayName}
                   isRecipe={isRecipe}
-                  onDelete={remove}
+                  onDelete={(id) => restoreOnDelete(id)}
                 />
               );
             })}
