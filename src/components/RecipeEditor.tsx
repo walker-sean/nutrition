@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useFoods } from '../hooks/useFoods';
+import { useBatches } from '../hooks/useBatches';
+import { toISODate } from '../lib/date';
 import { recipeTotals, recipePerServing } from '../lib/recipes';
 import type { Food, MealSlot, Recipe } from '../types';
 
@@ -31,6 +33,7 @@ function blankRecipe(): Recipe {
 
 export default function RecipeEditor({ open, initial, onClose, onSave, onDelete }: Props) {
   const { foods } = useFoods();
+  const { createBatch } = useBatches(initial?.id);
   const [draft, setDraft] = useState<Recipe>(initial ?? blankRecipe());
   const [foodPickerOpen, setFoodPickerOpen] = useState(false);
   const [foodQuery, setFoodQuery] = useState('');
@@ -199,6 +202,20 @@ export default function RecipeEditor({ open, initial, onClose, onSave, onDelete 
           >
             Save
           </button>
+          {initial && (
+            <button
+              type="button"
+              onClick={async () => {
+                const n = prompt('How many servings did you cook?', String(initial.servings));
+                const num = parseInt(n ?? '', 10);
+                if (!Number.isFinite(num) || num <= 0) return;
+                await createBatch({ recipeId: initial.id, cookedDate: toISODate(new Date()), servingsTotal: num });
+              }}
+              className="bg-card text-accent rounded-lg px-4 text-sm"
+            >
+              Cook this
+            </button>
+          )}
           {initial && onDelete && (
             <button
               type="button"
