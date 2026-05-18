@@ -5,7 +5,7 @@ import { useDailyLog } from '../hooks/useDailyLog';
 import { calculateTargets } from '../lib/macros';
 import { toISODate } from '../lib/date';
 import { db } from '../lib/db';
-import type { Food } from '../types';
+import type { Food, Recipe } from '../types';
 import CalorieRing from '../components/CalorieRing';
 import MacroBars from '../components/MacroBars';
 import FoodLogEntry from '../components/FoodLogEntry';
@@ -17,17 +17,36 @@ export default function TodayScreen() {
   const { entries, totals, add, remove } = useDailyLog(today);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const foodIds = useMemo(() => entries.map((e) => e.foodId), [entries]);
+  const foodIds = useMemo(
+    () => entries.filter((e) => e.foodId).map((e) => e.foodId!),
+    [entries]
+  );
+  const recipeIds = useMemo(
+    () => entries.filter((e) => e.recipeId).map((e) => e.recipeId!),
+    [entries]
+  );
+
   const foods = useLiveQuery(
     () => (foodIds.length === 0 ? Promise.resolve([] as Food[]) : db.foods.where('id').anyOf(foodIds).toArray()),
     [foodIds.join(',')],
     [] as Food[]
   );
+  const recipes = useLiveQuery(
+    () => (recipeIds.length === 0 ? Promise.resolve([] as Recipe[]) : db.recipes.where('id').anyOf(recipeIds).toArray()),
+    [recipeIds.join(',')],
+    [] as Recipe[]
+  );
+
   const foodNameById = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const f of foods) map.set(f.id, f.name);
-    return map;
+    const m = new Map<string, string>();
+    for (const f of foods) m.set(f.id, f.name);
+    return m;
   }, [foods]);
+  const recipeNameById = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const r of recipes) m.set(r.id, r.name);
+    return m;
+  }, [recipes]);
 
   const targets = settings ? calculateTargets(settings) : null;
   const formattedDate = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
@@ -62,14 +81,21 @@ export default function TodayScreen() {
           <div className="text-sm text-subtle">Nothing logged yet today.</div>
         ) : (
           <div className="space-y-1.5">
-            {entries.map((e) => (
-              <FoodLogEntry
-                key={e.id}
-                entry={e}
-                foodName={foodNameById.get(e.foodId) ?? '(unknown food)'}
-                onDelete={remove}
-              />
-            ))}
+            {entries.map((e) => {
+              const isRecipe = !!e.recipeId;
+              const displayName = isRecipe
+                ? recipeNameById.get(e.recipeId!) ?? '(unknown recipe)'
+                : foodNameById.get(e.foodId ?? '') ?? '(unknown food)';
+              return (
+                <FoodLogEntry
+                  key={e.id}
+                  entry={e}
+                  displayName={displayName}
+                  isRecipe={isRecipe}
+                  onDelete={remove}
+                />
+              );
+            })}
           </div>
         )}
       </div>
