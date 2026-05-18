@@ -27,7 +27,7 @@ export class NutritionDB extends Dexie {
       weightEntries: 'id, date',
       checkIns: 'id, date',
       recipes: 'id, name',
-      mealPlans: 'id, active',
+      mealPlans: 'id, name',
       batches: 'id, recipeId, cookedDate',
     });
   }

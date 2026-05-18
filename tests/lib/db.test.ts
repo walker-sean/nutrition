@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import Dexie from 'dexie';
 import { db } from '../../src/lib/db';
 
 beforeEach(async () => {
@@ -70,16 +71,43 @@ describe('db', () => {
     expect(r?.name).toBe('Test Recipe');
   });
 
-  it('preserves existing food rows across the v2 upgrade', async () => {
-    await db.foods.add({
+  it('preserves existing food rows when upgrading from v1 to v2', async () => {
+    await db.delete();
+
+    // Open a Dexie instance bound to v1 only, simulating a real user's existing DB.
+    const v1 = new Dexie('nutrition-tracker');
+    v1.version(1).stores({
+      settings: 'id',
+      foods: 'id, name, barcode',
+      logEntries: 'id, date, foodId',
+      weightEntries: 'id, date',
+      checkIns: 'id, date',
+    });
+    await v1.open();
+    await v1.table('foods').add({
       id: 'food-keep',
       name: 'Carry-over food',
       calories: 100, protein: 10, carbs: 10, fat: 5,
       servingSize: 100, servingUnit: 'g',
     });
-    await db.close();
+    v1.close();
+
+    // Now opening the real NutritionDB (which declares versions 1 + 2) should
+    // upgrade the existing IndexedDB from v1 to v2 in place.
     await db.open();
     const f = await db.foods.get('food-keep');
     expect(f?.name).toBe('Carry-over food');
+
+    // And the new v2 tables should be usable on the upgraded database.
+    expect(db.recipes).toBeDefined();
+    await db.recipes.put({
+      id: 'r-after-upgrade',
+      name: 'Post-upgrade recipe',
+      slots: ['breakfast'],
+      servings: 1,
+      ingredients: [],
+    });
+    const r = await db.recipes.get('r-after-upgrade');
+    expect(r?.name).toBe('Post-upgrade recipe');
   });
 });

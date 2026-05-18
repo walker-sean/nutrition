@@ -29,7 +29,7 @@ export interface LogEntry {
   recipeId?: string; // set for recipe entries
   batchId?: string;  // set when a batch was decremented
   slot?: MealSlot;   // set when logged from a slot card on Today
-  grams?: number;    // unused for recipe entries
+  grams?: number;
   calories: number;
   protein: number;
   carbs: number;
@@ -80,7 +80,7 @@ export interface MealPlan {
   id: string;
   name: string;
   active: boolean;
-  days: MealPlanDay[]; // length 7
+  days: MealPlanDay[];
 }
 
 export interface Batch {
