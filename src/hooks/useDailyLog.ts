@@ -19,13 +19,9 @@ export function useDailyLog(date: string) {
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
 
-  async function remove(id: string) {
-    await db.logEntries.delete(id);
-  }
-
   async function add(entry: LogEntry) {
     await db.logEntries.put(entry);
   }
 
-  return { entries, totals, add, remove };
+  return { entries, totals, add };
 }

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../lib/db';
-import { forceReloadSeeds } from '../lib/seedLoader';
+import { forceReloadSeeds, runSeedLoader } from '../lib/seedLoader';
 import type { Settings } from '../types';
 
 export function useSettings() {
@@ -11,6 +11,9 @@ export function useSettings() {
 
   async function save(input: Omit<Settings, 'id'>) {
     await db.settings.put({ id: 1, ...input });
+    // After the settings row exists, runSeedLoader is no-op-after-first-success.
+    // This handles the fresh-install case where the boot-time load saw no settings.
+    await runSeedLoader();
   }
 
   async function reloadSeeds() {

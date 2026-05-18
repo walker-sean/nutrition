@@ -27,4 +27,19 @@ describe('useSettings', () => {
     const stored = await db.settings.get(1);
     expect(stored?.surplusTarget).toBe(300);
   });
+
+  it('triggers seed loading on first save (closes the fresh-install gap)', async () => {
+    const { result } = renderHook(() => useSettings());
+    // Confirm clean state: no settings, no seeds yet.
+    expect(await db.settings.get(1)).toBeUndefined();
+    expect(await db.recipes.count()).toBe(0);
+
+    await act(async () => {
+      await result.current.save({ bodyWeight_lbs: 175, surplusTarget: 300, startDate: '2026-05-18' });
+    });
+
+    await waitFor(() => expect(db.recipes.count()).resolves.toBeGreaterThan(0));
+    const settings = await db.settings.get(1);
+    expect(settings?.seededRecipesAt).toBeTypeOf('string');
+  });
 });
