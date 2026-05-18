@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { useFoods } from '../hooks/useFoods';
 import type { Food } from '../types';
 import { searchUsda, getUsdaApiKey, type UsdaResult } from '../lib/usda';
+import BarcodeScanner from '../components/BarcodeScanner';
+import { lookupBarcode } from '../lib/openFoodFacts';
 
 function blankDraft(): Omit<Food, 'id'> {
   return {
@@ -23,6 +25,32 @@ export default function LibraryScreen() {
   const [usdaResults, setUsdaResults] = useState<UsdaResult[]>([]);
   const [usdaLoading, setUsdaLoading] = useState(false);
   const [usdaError, setUsdaError] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+
+  async function handleBarcode(barcode: string) {
+    setScanError(null);
+    try {
+      const product = await lookupBarcode(barcode);
+      if (!product) {
+        setScanError(`No product found for barcode ${barcode}`);
+        return;
+      }
+      await add({
+        id: crypto.randomUUID(),
+        name: product.name,
+        calories: product.calories,
+        protein: product.protein,
+        carbs: product.carbs,
+        fat: product.fat,
+        servingSize: 100,
+        servingUnit: 'g',
+        barcode: product.barcode,
+      });
+    } catch (e) {
+      setScanError(e instanceof Error ? e.message : 'Lookup failed');
+    }
+  }
 
   async function runUsdaSearch() {
     if (query.trim().length < 2 || usdaLoading) return;
@@ -108,12 +136,26 @@ export default function LibraryScreen() {
           🔍
         </button>
         <button
+          onClick={() => setScanning(true)}
+          className="bg-card text-white rounded-lg px-3 text-sm"
+          aria-label="Scan barcode"
+        >
+          📷
+        </button>
+        <button
           onClick={() => setShowForm((s) => !s)}
           className="bg-accent text-black rounded-lg px-3 text-sm font-bold"
         >
           {showForm ? 'Cancel' : 'New'}
         </button>
       </div>
+      {scanError && <div className="text-sm text-fat">{scanError}</div>}
+
+      <BarcodeScanner
+        open={scanning}
+        onClose={() => setScanning(false)}
+        onDetected={(b) => handleBarcode(b)}
+      />
 
       {showForm && (
         <div className="bg-card rounded-xl p-4 space-y-3">
