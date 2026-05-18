@@ -30,6 +30,10 @@ export default function LibraryScreen() {
 
   async function handleBarcode(barcode: string) {
     setScanError(null);
+    if (!navigator.onLine) {
+      setScanError('Offline — barcode lookup requires a connection.');
+      return;
+    }
     try {
       const product = await lookupBarcode(barcode);
       if (!product) {
@@ -53,7 +57,11 @@ export default function LibraryScreen() {
   }
 
   async function runUsdaSearch() {
-    if (query.trim().length < 2 || usdaLoading) return;
+    if (query.trim().length < 2) return;
+    if (!navigator.onLine) {
+      setUsdaError('Offline — USDA search requires a connection.');
+      return;
+    }
     setUsdaLoading(true);
     setUsdaError(null);
     try {
