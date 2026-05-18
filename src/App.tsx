@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TabBar from './components/TabBar';
 import TodayScreen from './screens/TodayScreen';
-import LibraryScreen from './screens/LibraryScreen';
+import LibraryLayout from './screens/library/LibraryLayout';
+import FoodsSubScreen from './screens/library/FoodsSubScreen';
 import ProgressScreen from './screens/ProgressScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
@@ -11,7 +12,11 @@ export default function App() {
       <div className="min-h-screen bg-bg text-white">
         <Routes>
           <Route path="/" element={<TodayScreen />} />
-          <Route path="/library" element={<LibraryScreen />} />
+          <Route path="/library" element={<LibraryLayout />}>
+            <Route index element={<FoodsSubScreen />} />
+            <Route path="recipes" element={<div className="text-sm text-subtle">Recipes — added in Task 1.10.</div>} />
+            <Route path="plans" element={<div className="text-sm text-subtle">Plans — added in Phase 2.</div>} />
+          </Route>
           <Route path="/progress" element={<ProgressScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
         </Routes>

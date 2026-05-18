@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
-import { useFoods } from '../hooks/useFoods';
-import type { Food } from '../types';
-import { searchUsda, getUsdaApiKey, type UsdaResult } from '../lib/usda';
-import BarcodeScanner from '../components/BarcodeScanner';
-import { lookupBarcode } from '../lib/openFoodFacts';
+import { useFoods } from '../../hooks/useFoods';
+import type { Food } from '../../types';
+import { searchUsda, getUsdaApiKey, type UsdaResult } from '../../lib/usda';
+import BarcodeScanner from '../../components/BarcodeScanner';
+import { lookupBarcode } from '../../lib/openFoodFacts';
 
 function blankDraft(): Omit<Food, 'id'> {
   return {
@@ -17,7 +17,7 @@ function blankDraft(): Omit<Food, 'id'> {
   };
 }
 
-export default function LibraryScreen() {
+export default function FoodsSubScreen() {
   const { foods, add, remove } = useFoods();
   const [query, setQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -123,9 +123,7 @@ export default function LibraryScreen() {
   }
 
   return (
-    <div className="p-4 pb-24 space-y-4">
-      <h1 className="text-xl font-bold">Library</h1>
-
+    <div className="space-y-4">
       <div className="flex gap-2">
         <input
           type="search"
@@ -135,46 +133,21 @@ export default function LibraryScreen() {
           onKeyDown={(e) => { if (e.key === 'Enter') runUsdaSearch(); }}
           className="flex-1 bg-card rounded-lg px-3 py-2 text-sm"
         />
-        <button
-          onClick={runUsdaSearch}
-          disabled={query.trim().length < 2 || usdaLoading}
-          className="bg-card text-white rounded-lg px-3 text-sm"
-          aria-label="Search USDA"
-        >
-          🔍
-        </button>
-        <button
-          onClick={() => setScanning(true)}
-          className="bg-card text-white rounded-lg px-3 text-sm"
-          aria-label="Scan barcode"
-        >
-          📷
-        </button>
-        <button
-          onClick={() => setShowForm((s) => !s)}
-          className="bg-accent text-black rounded-lg px-3 text-sm font-bold"
-        >
+        <button onClick={runUsdaSearch} disabled={query.trim().length < 2 || usdaLoading} className="bg-card text-white rounded-lg px-3 text-sm" aria-label="Search USDA">🔍</button>
+        <button onClick={() => setScanning(true)} className="bg-card text-white rounded-lg px-3 text-sm" aria-label="Scan barcode">📷</button>
+        <button onClick={() => setShowForm((s) => !s)} className="bg-accent text-black rounded-lg px-3 text-sm font-bold">
           {showForm ? 'Cancel' : 'New'}
         </button>
       </div>
       {scanError && <div className="text-sm text-fat">{scanError}</div>}
 
-      <BarcodeScanner
-        open={scanning}
-        onClose={() => setScanning(false)}
-        onDetected={(b) => handleBarcode(b)}
-      />
+      <BarcodeScanner open={scanning} onClose={() => setScanning(false)} onDetected={(b) => handleBarcode(b)} />
 
       {showForm && (
         <div className="bg-card rounded-xl p-4 space-y-3">
           <label className="block text-sm">
             Name
-            <input
-              type="text"
-              value={draft.name}
-              onChange={(e) => update('name', e.target.value)}
-              className="block w-full bg-surface rounded-md px-2 py-1 mt-1"
-            />
+            <input type="text" value={draft.name} onChange={(e) => update('name', e.target.value)} className="block w-full bg-surface rounded-md px-2 py-1 mt-1" />
           </label>
           <div className="text-xs text-muted">Per 100g</div>
           {numberField('calories', 'Calories')}
@@ -183,12 +156,7 @@ export default function LibraryScreen() {
           {numberField('fat', 'Fat (g)')}
           <div className="text-xs text-muted pt-2">Default serving</div>
           {numberField('servingSize', 'Serving size (g)')}
-          <button
-            onClick={handleSave}
-            className="w-full bg-accent text-black font-bold rounded-lg py-2 text-sm"
-          >
-            Save Food
-          </button>
+          <button onClick={handleSave} className="w-full bg-accent text-black font-bold rounded-lg py-2 text-sm">Save Food</button>
         </div>
       )}
 
@@ -226,13 +194,7 @@ export default function LibraryScreen() {
                   {Math.round(f.calories)} kcal / 100g · {Math.round(f.protein)}p {Math.round(f.carbs)}c {Math.round(f.fat)}f
                 </div>
               </div>
-              <button
-                onClick={() => remove(f.id)}
-                aria-label={`Delete ${f.name}`}
-                className="text-muted text-lg leading-none px-1"
-              >
-                ×
-              </button>
+              <button onClick={() => remove(f.id)} aria-label={`Delete ${f.name}`} className="text-muted text-lg leading-none px-1">×</button>
             </div>
           ))}
         </div>
